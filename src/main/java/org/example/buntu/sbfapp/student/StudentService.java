@@ -2,7 +2,10 @@ package org.example.buntu.sbfapp.student;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -28,13 +31,33 @@ public class StudentService {
         studentRepository.save(student);
     }
 
-    public void deleteStudent(Student student) {
-        boolean studentExists = studentRepository
-                .findById(student.getId()).isPresent();
+    public void deleteStudent(Long studentId) {
+        boolean studentExists = studentRepository.existsById(studentId);
         if (!studentExists) {
-            throw new IllegalStateException("student with id " + student.getId() + " does not exist");
+            throw new IllegalStateException("student with id " + studentId + " does not exist");
         }
 
-        studentRepository.delete(student);
+        studentRepository.deleteById(studentId);
+    }
+    @Transactional
+    public void updateStudent(Long studentId, String name, String email) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "student with id " + studentId + " does not exist"
+                ));
+        if (name != null && !name.isEmpty() && !Objects.equals(student.getName(),name)) {
+            student.setName(name);
+        }
+
+        if (email != null && !email.isEmpty() && !Objects.equals(student.getEmail(), email)) {
+            boolean emailTaken = studentRepository.findStudentByEmail(email).isPresent();
+            if (emailTaken) {
+                throw new IllegalStateException("email taken");
+            }
+            student.setEmail(email);
+        }
+
+        studentRepository.save(student);
+
     }
 }
