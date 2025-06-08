@@ -21,4 +21,15 @@ public class StudentController {
     public void registerNewStudent(@RequestBody Student student) {
          studentService.registerNewStudent(student);
     }
+
+    @DeleteMapping(path = "{studentId}")
+    public  void deleteStudent(@PathVariable("studentId") Long id) {
+        studentService.deleteStudent(
+                studentService.Students()
+                        .stream()
+                        .filter(student -> student.getId().equals(id))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalStateException("Student with id " + id + " does not exist"))
+        );
+    }
 }
