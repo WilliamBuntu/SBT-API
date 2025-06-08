@@ -25,25 +25,28 @@ public class Student {
     private String name;
     private String email;
     private LocalDate dob;
+    @Transient
     private String age;
 
     public Student() {
     }
 
-    public Student(Long id, String name, String email, LocalDate dob, String age) {
+    public Student(Long id, String name, String email, LocalDate dob) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.dob = dob;
-        this.age = age;
+
     }
 
-    public Student(String name, String email, LocalDate dob, String age) {
+    public Student(String name, String email, LocalDate dob ) {
         this.name = name;
         this.email = email;
         this.dob = dob;
-        this.age = age;
+
     }
 
-
+    public String getAge() {
+        return dob.until(LocalDate.now()).getYears() + " years";
+    }
 }

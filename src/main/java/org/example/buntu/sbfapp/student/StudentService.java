@@ -18,4 +18,13 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
+    public void registerNewStudent(Student student) {
+        boolean studentExists = studentRepository
+                .findStudentByEmail(student.getEmail())
+                .isPresent();
+        if (studentExists) {
+            throw new IllegalStateException("email taken");
+        }
+        studentRepository.save(student);
+    }
 }
